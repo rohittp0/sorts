@@ -10,6 +10,7 @@ public class Main {
         insertionSort(unsortedArray);
         benchmarkQuickSort(unsortedArray);
         benchmarkMergeSort(unsortedArray);
+        benchmarkFlashSort(unsortedArray);
 
         System.out.println("\n\nRunning with 100,000 elements\n");
         unsortedArray = createArrayWithRandomInts(100000);
@@ -19,6 +20,7 @@ public class Main {
         insertionSort(unsortedArray);
         benchmarkQuickSort(unsortedArray);
         benchmarkMergeSort(unsortedArray);
+        benchmarkFlashSort(unsortedArray);
     }
 
     /**
@@ -201,6 +203,95 @@ public class Main {
         long end = System.currentTimeMillis();
         System.out.println("Array sorted with merge sort in :" + (end - start) + "ms");
     }
+
+    static void flashSort(int @NotNull [] a)
+    {
+        int[] l = new int[Math.min(a.length / 20, 30)];
+        int i, j = 0, k;
+        int anmin = a[0];
+        int nmax  = 0;
+
+
+        for (i=1; i < a.length; i++)
+
+
+        {
+            if (a[i] < anmin) anmin=a[i];
+            if (a[i] > a[nmax]) nmax=i;
+        }
+
+
+        if (anmin == a[nmax]) return;
+
+
+        double c1 = ((double)l.length - 1)/(a[nmax] - anmin);
+
+
+        for (i=0; i < a.length; i++)
+        {
+            k=(int)(c1*(a[i] - anmin));
+            l[k]++;
+        }
+
+
+        for (k=1; k < l.length; k++)
+        {
+            l[k] += l[k-1];
+        }
+
+
+        int hold = a[nmax];
+        a[nmax]=a[0];
+        a[0]=hold;
+
+
+        int nmove = 0;
+        int flash;
+        k=l.length-1;
+
+
+        while (nmove < a.length-1)
+
+
+        {
+            while (j > (l[k]-1))
+
+
+            {
+                j++;
+                k = (int)(c1 * (a[j] - anmin));
+            }
+
+
+            flash = a[j];
+
+
+            while (!(j == l[k]))
+
+
+            {
+                k = (int) (c1 * (flash - anmin));
+
+
+                hold = a[l[k]-1];
+                a[l[k]-1]=flash;
+                flash = hold;
+
+
+                l[k]--;
+                nmove++;
+            }
+        }
+    }
+
+
+    static void benchmarkFlashSort(int[] array) {
+        long start = System.currentTimeMillis();
+        flashSort(array);
+        long end = System.currentTimeMillis();
+        System.out.println("Array sorted with flash sort in :" + (end - start) + "ms");
+    }
+
 
 
     /**

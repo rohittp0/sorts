@@ -119,13 +119,14 @@ public class Main {
             while (array[j] > pivot) {
                 j--;
             }
-            if (i <= j) {
+            if (i < j) {
                 int temp = array[i];
                 array[i] = array[j];
                 array[j] = temp;
-                i++;
-                j--;
             }
+
+            i++;
+            j--;
         }
 
         if (low < j) {
